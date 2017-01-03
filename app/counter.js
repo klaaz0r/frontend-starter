@@ -12,7 +12,7 @@ export default function main(sources) {
   return {
     DOM: count$.map(count =>
       div([
-        h1('Gulp is awesome, making streams in fat'),
+        h1('Gulp is awesome, making streams in hjgjhg'),
         p('you are fat'),
         button('.decrement .ui .button', 'Decrement'),
         button('.increment .ui .button', 'Increment'),
