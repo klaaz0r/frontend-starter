@@ -21,7 +21,7 @@
     "babel-preset-es2017": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.18.0",
-    "babel-register-cli": "^2.0.1",
+    "babel-register-cli": "^3.0.0",
     "browser-sync": "^2.18.5",
     "cycle-hmr": "^0.3.1",
     "eslint": "^3.12.2",
@@ -44,7 +44,7 @@
     "less": "^2.7.1",
     "less-loader": "^2.2.3",
     "node-cmd": "^1.2.0",
-    "node-sass": "^3.11.2",
+    "node-sass": "^4.1.1",
     "require-dir": "^0.3.1",
     "semantic-ui-less": "^2.2.4",
     "style-loader": "^0.13.1",
@@ -54,11 +54,11 @@
     "webpack-hot-middleware": "^2.14.0"
   },
   "dependencies": {
-    "@cycle/dom": "^10.0.4",
+    "@cycle/dom": "^14.3.0",
     "@cycle/xstream-adapter": "^3.1.0",
-    "@cycle/xstream-run": "^3.0.3",
+    "@cycle/xstream-run": "^4.2.0",
     "performance-now": "^0.2.0",
-    "ramda": "^0.22.1",
-    "xstream": "^5.0.6"
+    "ramda": "^0.23.0",
+    "xstream": "^9.3.0"
   }
 }
