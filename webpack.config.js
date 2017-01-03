@@ -1,25 +1,42 @@
 const webpack = require('webpack')
+const path = require('path')
 
-module.exports = {
-    entry: {
-        app: './app',
-        vendor: ['ramda', '@cycle/dom'],
-    },
+const plugins = env => env === 'develop' ? [
+      new webpack.optimize.OccurenceOrderPlugin(),
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.NoErrorsPlugin()
+    ] : []
+
+const entry = env => env === 'develop' ? [
+      'webpack/hot/dev-server',
+      'webpack-hot-middleware/client',
+      './index.js'
+    ] : ['./index.js']
+
+const loaders = env => env === 'develop' ? [
+      'babel-loader',
+      'eslint-loader'
+    ] : ['babel-loader']
+
+module.exports = env => {
+  return {
+    context: path.join(__dirname, 'app'),
+    entry: entry(env),
     output: {
-        basePath: 'dist/',
-        filename: '[name].js'
+      path: path.join(process.cwd(), 'dist'),
+      publicPath: '/',
+      filename: 'app.js'
     },
     module: {
-        loaders: [
-            {
-                test: /\.js$/,
-                loaders: ['babel-loader'],
-                include: __dirname,
-                exclude: /node_modules/
-            }
-        ]
+      loaders: [
+        {
+          test: /\.js$/,
+          loaders: loaders(env),
+          include: __dirname,
+          exclude: /node_modules/
+        }
+      ]
     },
-    plugins: [
-        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
-    ]
+    plugins: plugins(env)
+  }
 }

@@ -1,3 +1,17 @@
 {
-  "presets": ["es2015", "stage-0"]
+    "presets": ["es2015", "stage-0"],
+    "env": {
+        "development": {
+            "plugins": [
+                "espower", ["cycle-hmr/xstream", {
+                    "include": [
+                        "**/app/**"
+                    ]
+                }]
+            ]
+        },
+        "production": {
+            "plugins": []
+        }
+    }
 }
