@@ -57,7 +57,7 @@
     "@cycle/dom": "^14.3.0",
     "@cycle/xstream-adapter": "^3.1.0",
     "@cycle/xstream-run": "^4.2.0",
-    "performance-now": "^0.2.0",
+    "performance-now": "^1.0.2",
     "ramda": "^0.23.0",
     "xstream": "^9.3.0"
   }
