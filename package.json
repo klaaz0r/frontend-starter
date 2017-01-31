@@ -59,6 +59,6 @@
     "@cycle/xstream-run": "^4.2.0",
     "performance-now": "^0.2.0",
     "ramda": "^0.23.0",
-    "xstream": "^9.3.0"
+    "xstream": "^10.1.0"
   }
 }
