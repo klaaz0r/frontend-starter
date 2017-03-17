@@ -12,7 +12,7 @@ The core of the starter is the gulpfile, and I head you thinking "gulp? It's 201
 
 Webpack is used in combination with Browsersync for HMR and for creating DLL files of your NPM modules.
 
-To create a practicall configuration of the app I used gulp-convict. You can find more info on it here https://github.com/klaaz0r/gulp-convict
+To create a practicall configuration of the app I used gulp-convict. You can find more info on it [here](https://github.com/klaaz0r/gulp-convict) 
 
 ## Tasks
 The following tasks are pressent 
@@ -30,3 +30,6 @@ Available tasks
   scripts     bundle app (only used for builds)
   serve       browserSync with webpack middleware [preserve]
 ```
+
+## DLL
+Or Dynamically Linked Library, seperate vendor files from your own code and speed up the reloading. Currently we are looking add a reload speed of 200ms in production for an application containing around 3000 lines of code. You can find more information on DLL [here](https://robertknight.github.io/posts/webpack-dll-plugins/)
