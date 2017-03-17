@@ -59,4 +59,29 @@ If you want to work with cycle you need to change your `.babelrc` to
   }
 }
 ```
-change the include patt to your application folder and run  `npm install cycle-hmr`
+change the include patt to your application folder and run  `npm install cycle-hmr`. If you want to do this for React you want to take a look into react-transform-hmr it works the same as cycle-hmr for setting it up. 
+
+## Assets
+moving arroung assets is simple with gulp, the thing I like about gulp is the declarative way it is setup
+
+```javascript
+gulp.task('css', 'building custom stylus', _ => {
+  browserSync.notify('compiling styles')
+  return gulp.src(paths.styles + '/main.scss')
+    .pipe(sass())
+    .pipe(gulpif(isProd, purify([paths.app + '/**/*.js'])))
+    .pipe(gulpif(isProd, cleanCSS({ compatibility: 'ie8' })))
+    .pipe(debug({ title: 'styles' }))
+    .pipe(gulp.dest(paths.dist))
+    .pipe(gulpif(isDev, browserSync.stream()))
+})
+```
+
+all tasks make use of `gulpif` to determine if we are running in development or production, with the simple code that checks the `NODE_ENV` 
+
+```javascript
+const isProd = gulp.environment !== 'develop'
+const isDev = gulp.environment === 'develop'
+```
+
+yes this could be done in one line but it makes the gulp tasks a bit more readable. 
