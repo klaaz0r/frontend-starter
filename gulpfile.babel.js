@@ -4,32 +4,32 @@ const gulp = require('gulp-help')(require('gulp'))
 
 const clean = require('gulp-clean')
 const gutil = require('gulp-util')
-const stylus = require('gulp-stylus')
+const sass = require('gulp-sass')
 const htmlmin = require('gulp-htmlmin')
 const less = require('gulp-less')
 const gulpif = require('gulp-if')
-const uglify = require('gulp-uglify')
 const cleanCSS = require('gulp-clean-css')
 const purify = require('gulp-purifycss')
+const runSequence = require('run-sequence')
+const debug = require('gulp-debug')
+const convict = require('gulp-convict')
 
+const R = require('ramda')
+
+gulp.environment = process.env.NODE_ENV ? process.env.NODE_ENV : 'develop'
 
 const webpack = require('webpack')
-const webpackStream = require('gulp-webpack')
+const webpackStream = require('webpack-stream')
 
 const webpackDevMiddleware = require('webpack-dev-middleware')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 
-gulp.environment = process.env.NODE_ENV ? process.env.NODE_ENV : 'develop'
-
-const webpackConfig = require('./webpack.config.js')(gulp.environment)
-const middlewareBundler = webpack(webpackConfig)
-
 const browserSync = require('browser-sync').create()
 
-gulp.paths = {
+const paths = {
   app: 'app',
   semantic: 'semantic',
-  styles: 'styles',
+  styles: 'style',
   dist: 'dist'
 }
 
@@ -38,72 +38,86 @@ const isDev = gulp.environment === 'develop'
 
 gutil.log('build environment', gutil.colors.magenta(gulp.environment))
 
-gulp.task('default', 'starts dev server and watching files', ['clean'], () => {
+gulp.task('default', 'starts dev server and watching files', ['clean'], _ => {
   gulp.start('serve')
 })
 
-gulp.task('build:prod', 'building production', ['clean'], () => {
-  gulp.start('build')
+gulp.task('build:prod', 'building production', ['clean'], (cb) => {
+  runSequence('html', 'dll', 'scripts', 'css', cb)
 })
 
-gulp.task('build', 'building files', ['html', 'scripts', 'semantic', 'styles'])
+gulp.task('preserve', 'building files', (cb) => {
+  runSequence('html', 'dll', 'config', 'css', cb)
+})
 
-gulp.task('clean', 'cleaning dist/', () => {
-  return gulp.src(gulp.paths.dist, { read: false })
+gulp.task('clean', 'cleaning dist/', _ => {
+  return gulp.src(paths.dist, { read: false })
     .pipe(clean())
 })
 
-gulp.task('serve', 'browserSync with webpack middleware', ['build'], () => {
+gulp.task('serve', 'browserSync with webpack middleware', ['preserve'], _ => {
+  // we use multiple instances of webpack
+  const bundler = webpack(require('./webpack.config.js')(gulp.environment))
+
   browserSync.init({
     server: {
-      baseDir: gulp.paths.dist,
+      port: 8080,
+      baseDir: paths.dist,
       middleware: [
-        webpackDevMiddleware(middlewareBundler, {
-          publicPath: webpackConfig.output.publicPath,
-          stats: {
-            colors: true,
-            chunks: false,
-          }
+        webpackDevMiddleware(bundler, {
+          publicPath: '/',
+          stats: { colors: true, chunks: false }
         }),
-        webpackHotMiddleware(middlewareBundler)
+        webpackHotMiddleware(bundler)
       ]
     }
   })
 
-  gulp.watch([gulp.paths.styles + '/**/*.styl'], ['styles'])
-  gulp.watch([gulp.paths.app + '/**/*.html'], ['html'])
-  gulp.watch([gulp.paths.semantic + '/**/*.*'], ['semantic'])
-
+  // these tasks are injected, JS gets HMR'd by webpack
+  gulp.watch([paths.styles + '/**/*.scss'], ['css'])
+  gulp.watch([paths.app + '/**/*.html'], ['html'])
 })
 
 gulp.task('scripts', 'bundle app (only used for builds)', () => {
-  return gulp.src(gulp.paths.app)
-    .pipe(webpackStream(webpackConfig))
-    .pipe(gulp.dest(gulp.paths.dist))
+  return webpackStream(require('./webpack.config.js')(gulp.environment), webpack)
+    .pipe(debug({ title: 'scripts' }))
+    .pipe(gulp.dest(paths.dist))
 })
 
-gulp.task('html', 'minify html and move to dist', () => {
-  return gulp.src(gulp.paths.app + '/*.html')
+gulp.task('dll', 'making dll files (change dll.loader.js for new seperations)', (cb) => {
+  const vendor = [R.keys(require('./package.json').dependencies)]
+
+  gutil.log('vendor files', gutil.colors.blue.bold(vendor))
+
+  webpack(require('./webpack.config.dll.js')(vendor), function(err, stats) {
+    if (err) {
+      throw new gutil.PluginError('webpack', err)
+    }
+    gutil.log('[webpack dll]', stats.toString({ colors: true, chunks: false }))
+    cb()
+  })
+})
+
+gulp.task('html', 'minify html and move to dist', _ => {
+  return gulp.src(paths.app + '/*.html')
     .pipe(gulpif(isProd, htmlmin({ collapseWhitespace: true })))
-    .pipe(gulp.dest(gulp.paths.dist))
+    .pipe(debug({ title: 'hmtl' }))
+    .pipe(gulp.dest(paths.dist))
 })
 
-gulp.task('semantic', 'building semantic less', () => {
-  browserSync.notify('compiling semantic')
-  return gulp.src(gulp.paths.semantic + '/semantic.less')
-    .pipe(less())
-    .pipe(gulpif(isProd, purify([gulp.paths.app + '/**/*.js'])))
-    .pipe(gulpif(isProd, cleanCSS({ compatibility: 'ie8' })))
-    .pipe(gulp.dest(gulp.paths.dist))
-    .pipe(gulpif(isDev, browserSync.stream()))
-})
-
-gulp.task('styles', 'building custom stylus', () => {
+gulp.task('css', 'building custom stylus', _ => {
   browserSync.notify('compiling styles')
-  return gulp.src(gulp.paths.styles + '/main.styl')
-    .pipe(stylus())
-    .pipe(gulpif(isProd, purify([gulp.paths.app + '/**/*.js'])))
+  return gulp.src(paths.styles + '/main.scss')
+    .pipe(sass())
+    .pipe(gulpif(isProd, purify([paths.app + '/**/*.js'])))
     .pipe(gulpif(isProd, cleanCSS({ compatibility: 'ie8' })))
-    .pipe(gulp.dest(gulp.paths.dist))
+    .pipe(debug({ title: 'styles' }))
+    .pipe(gulp.dest(paths.dist))
     .pipe(gulpif(isDev, browserSync.stream()))
+})
+
+gulp.task('config', 'get the correct config', _ => {
+  return gulp.src('./config/*.js')
+    .pipe(convict({ log: true, schema: __dirname + '/config/schema.js' }))
+    .pipe(gulp.dest(paths.app))
 })

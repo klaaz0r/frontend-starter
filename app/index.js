@@ -1,6 +1,3 @@
-import Cycle from '@cycle/xstream-run'
-import { makeDOMDriver } from '@cycle/dom'
+import { map } from 'ramda'
 
-const counter = require('./counter').default
-
-Cycle.run(counter, { DOM: makeDOMDriver('.app') })
+console.log('hello world', map)
