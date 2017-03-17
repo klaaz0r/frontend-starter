@@ -1,4 +1,4 @@
-# frontend-starter
+# ⚒ frontend-starter
 A starter for your frontend projects, made with Gulp and Webpack2. 
 
 ## features
