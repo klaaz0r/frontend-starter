@@ -53,7 +53,7 @@
     "run-sequence": "^1.2.2",
     "semantic-ui-less": "^2.2.4",
     "style-loader": "^0.13.1",
-    "uglify-loader": "^1.4.0",
+    "uglify-loader": "^2.0.0",
     "webpack": "^1.14.0",
     "webpack-dev-middleware": "^1.9.0",
     "webpack-hot-middleware": "^2.14.0",
