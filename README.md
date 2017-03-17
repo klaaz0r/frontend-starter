@@ -12,4 +12,21 @@ The core of the starter is the gulpfile, and I head you thinking "gulp? It's 201
 
 Webpack is used in combination with Browsersync for HMR and for creating DLL files of your NPM modules.
 
-To create a practicall configuration of the app I used gulp-convict.
+To create a practicall configuration of the app I used gulp-convict. You can find more info on it here https://github.com/klaaz0r/gulp-convict
+
+## Tasks
+The following tasks are pressent 
+```
+Available tasks
+  build:prod  building production [clean]
+  clean       cleaning dist/
+  config      get the correct config
+  css         building custom stylus
+  default     starts dev server and watching files [clean]
+  dll         making dll files (change dll.loader.js for new seperations)
+  help        Display this help text.
+  html        minify html and move to dist
+  preserve    building files
+  scripts     bundle app (only used for builds)
+  serve       browserSync with webpack middleware [preserve]
+```
