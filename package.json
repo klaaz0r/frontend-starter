@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "cycle": "^1.0.3",
-    "ramda": "^0.23.0"
+    "ramda": "^0.25.0"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
