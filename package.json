@@ -55,7 +55,7 @@
     "style-loader": "^0.14.0",
     "uglify-loader": "^1.4.0",
     "webpack": "^1.14.0",
-    "webpack-dev-middleware": "^1.9.0",
+    "webpack-dev-middleware": "^3.5.1",
     "webpack-hot-middleware": "^2.14.0",
     "webpack-stream": "^3.2.0"
   }
