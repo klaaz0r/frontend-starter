@@ -40,7 +40,7 @@
     "gulp-help": "^1.6.1",
     "gulp-htmlmin": "^3.0.0",
     "gulp-if": "^2.0.2",
-    "gulp-load-plugins": "^1.4.0",
+    "gulp-load-plugins": "^2.0.0",
     "gulp-purifycss": "^0.2.0",
     "gulp-sass": "^3.1.0",
     "gulp-stylus": "^2.6.0",
